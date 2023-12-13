@@ -6,15 +6,11 @@
 /*   By: zmourid <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 09:14:33 by zmourid           #+#    #+#             */
-/*   Updated: 2023/12/12 16:03:08 by zmourid          ###   ########.fr       */
+/*   Updated: 2023/12/12 17:15:10 by zmourid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include "libft.h"
+#include "get_next_line.h"
 
 char *get_next_line(int fd)
 {
@@ -23,28 +19,32 @@ char *get_next_line(int fd)
 	char *buff;
 	int read_len = 0;
 	big_buff = NULL;
+	new_buff = NULL;
 	while(1)
 	{
-		buff = calloc(11 ,sizeof(char));
-		read_len = read(fd,buff,10);
+		buff = calloc(5 ,sizeof(char));
+		read_len = read(fd,buff,5);
 		if(read_len <= 0)
 		{
+
+			printf("ouuuut");
 			free(buff);
 			break;
 		}
 		big_buff = ft_strjoin(big_buff,buff);
-		if(ft_strchr(big_buff,'\n'))
-		{
-			new_buff = ft_substr(big_buff,0,ft_strchr(big_buff,'\n') - big_buff);	
-			break;
-		}
+		printf("buff = %s\n",big_buff);
+
 	}
-	return new_buff;;
+	printf("sub1");
+      char str[] = "hello world";
+      printf("sub = %s \n ",ft_substr(str,0,str + 5 - str));
+	return NULL;
 }
 int main()
 {
 	char *test;
 	int fd = open("test.txt",O_RDWR);
 	test = get_next_line(fd);
-	printf("new buff = %s\n",test);
+	if(test)
+		printf("new buff = %s\n",test);
 }
