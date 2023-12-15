@@ -75,16 +75,8 @@ char	*get_next_line(int fd)
 		temp_buff[read_len] = 0;
 		if(read_len == 0)
 		{
-			if(!buffer || !*buffer)
-			{
-				free(temp_buff);
-				return NULL;
-			}
-			line = ft_strdup(buffer);
-			free(buffer);
-			buffer = NULL;
 			free(temp_buff);
-			return line;
+			return buffer;
 		}
 		temp = buffer;
 		buffer = ft_strjoin(buffer,temp_buff);
@@ -98,7 +90,7 @@ char	*get_next_line(int fd)
 	free(temp_buff);
 	return line;
 }
-//int main()
+//int main()by
 //{
 //	char *str = "hello world\ncomo estas brothers\n";
 //	static char *buffer;
