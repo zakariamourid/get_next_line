@@ -6,7 +6,7 @@
 /*   By: zmourid <zmourid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 17:08:05 by zmourid           #+#    #+#             */
-/*   Updated: 2023/12/16 18:08:24y zmourid          ###   ########.fr       */
+/*   Updated: 2023/12/16 21:11:28 by zmourid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ int	has_nline(char *str)
 
 char	*read_line(int fd, char *buffer)
 {
-	int		len;
+	ssize_t	len;
 	char	*buff;
 
-	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	buff = malloc(((size_t)BUFFER_SIZE + 1) * sizeof(char));
 	if (!buff)
 		return (NULL);
 	while (1)
@@ -96,7 +96,7 @@ char	*get_next_line(int fd)
 	static char	*buffer;
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > INT_MAX)
 		return (NULL);
 	buffer = read_line(fd, buffer);
 	line = get_the_line(buffer);
@@ -104,20 +104,22 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-//int main()
-//{
-//	int fd = open("test.txt",O_RDWR);
-//	char *str;
-//	str = get_next_line(fd);
-//	printf("str =%s",str);
-//	free(str);
-//	str = get_next_line(fd);
-//	printf("str =%s",str);
-//	free(str);
-//	str = get_next_line(fd);
-//	printf("str =%s",str);
-//	free(str);
-//	str = get_next_line(fd);
-//	printf("str =%s",str);
-//	free(str);
-//}
+int	main(void)
+{
+	int		fd;
+	char	*str;
+
+	fd = open("test.txt", O_RDWR);
+	str = get_next_line(fd);
+	printf("str =%s", str);
+	free(str);
+	str = get_next_line(fd);
+	printf("str =%s", str);
+	free(str);
+	str = get_next_line(fd);
+	printf("str =%s", str);
+	free(str);
+	str = get_next_line(fd);
+	printf("str =%s", str);
+	free(str);
+}
