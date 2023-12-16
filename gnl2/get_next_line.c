@@ -6,6 +6,8 @@ int ft_strlen(const char *s)
 	int i;
 
 	i = 0;
+	if(!s)
+		return 0;
 	while(*s++)
 		i++;
 	return i;
@@ -75,24 +77,23 @@ char *read_line(int fd ,char *buffer)
 {
 	int len;
 	char *buff;
-	buff = malloc(5 * sizeof(char));
+	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if(!buff)
 		return NULL;
 	while(1)
 	{
 		len = read(fd,buff,BUFFER_SIZE);
-		if(len == 0)
+		if(len == -1)
 		{
-			printf("rest is %s \n",buffer);
-			if(!*buffer)
-			{
-				free(buff);
-				free(buffer);
-				return NULL;
-			}
+			free(buffer);
+			buffer = NULL;
 			break;
 		}
 		buff[len] = 0;
+		if(!*buff)
+		{
+			break;
+		}
 		buffer = ft_strjoin(buffer,buff);
 		if(has_nline(buffer))
 			break;
@@ -101,14 +102,17 @@ char *read_line(int fd ,char *buffer)
 	return buffer;
 }
 
-char *get_line(char *buffer)
+char *get_line2(char *buffer)
 {
 	char *line;
 	int len;
 	int i;
 	i = 0;
-	if(!buffer)
+	len = 0;
+	if(!buffer || !*buffer) 
+	{
 		return NULL;
+	}
 	while(buffer[len] && buffer[len] != '\n')
 		len++;
 	if(buffer[len] == '\n')
@@ -132,12 +136,13 @@ char *get_rest(char *buffer,int line_len)
 	char *new;
 	i = 0;
 	if(!buffer || !*buffer)
+	{
+		free(buffer);
 		return NULL;
+	}
 	new = ft_strdup(buffer + line_len);
 	free(buffer);
 	return new;
-	
-
 }
 
 char *get_next_line(int fd)
@@ -147,18 +152,25 @@ char *get_next_line(int fd)
 	if(fd < 0 || BUFFER_SIZE <= 0)
 		return NULL;
 	buffer = read_line(fd,buffer);
-	line = get_line(buffer);
+	line = get_line2(buffer);
 	buffer = get_rest(buffer , ft_strlen(line));
 	return line;
 }
-int main()
-{
-	int fd = open("test.txt",O_RDWR);
-	char *sa = get_next_line(fd);
-	printf("str =%s",sa);
-	sa = get_next_line(fd);
-	printf("str =%s",sa);
-	sa = get_next_line(fd);
-	printf("str =%s",sa);
-	free(sa);
-}
+
+//int main()
+//{
+//	int fd = open("test.txt",O_RDWR);
+//	char *str;
+//	str = get_next_line(fd);
+//	printf("str =%s",str);
+//	free(str);
+//	str = get_next_line(fd);
+//	printf("str =%s",str);
+//	free(str);
+//	str = get_next_line(fd);
+//	printf("str =%s",str);
+//	free(str);
+//	str = get_next_line(fd);
+//	printf("str =%s",str);
+//	free(str);
+//}
