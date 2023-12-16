@@ -1,160 +1,107 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zmourid <zmourid@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/16 17:08:05 by zmourid           #+#    #+#             */
+/*   Updated: 2023/12/16 18:08:24y zmourid          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
-
-int ft_strlen(const char *s)
+int	has_nline(char *str)
 {
-	int i;
-
-	i = 0;
-	if(!s)
-		return 0;
-	while(*s++)
-		i++;
-	return i;
-}
-
-char *ft_strdup(char *str)
-{
-	int len;
-	int i;
-	char *new;
-	if(!str)
-		return NULL;
-	len = ft_strlen(str);
-	i = 0;
-	new = (char *) malloc(len + 1);
-	if(!new)
-		return NULL;
-	while(str[i])
+	while (*str)
 	{
-		new[i] = str[i];
-		i++;
-	}
-	new[i] = 0;
-	return new;
-}
-char *ft_strjoin(char *s1,char *s2)
-{
-	int len;
-	int i;
-	char *str;
-	i = 0;
-	if(!s1)
-		return ft_strdup(s2);
-	if(!s2)
-	{
-		free(s1);
-		return NULL;
-	}
-	len = ft_strlen(s1) + ft_strlen(s2);
-	str = malloc(sizeof(char) * (len + 1));
-	if(!str)
-	{
-		free(s1);
-		return NULL;
-	}
-	str[len] = 0;
-	while(*s1)
-		str[i++] = *s1++;
-	free(s1 - i);
-	while(*s2)
-		str[i++] = *s2++;
-	return str;
-}
-
-int has_nline(char *str)
-{
-	while(*str)
-	{
-		if(*str == '\n')
-			return 1;
+		if (*str == '\n')
+			return (1);
 		str++;
 	}
-	return 0;
+	return (0);
 }
 
-char *read_line(int fd ,char *buffer)
+char	*read_line(int fd, char *buffer)
 {
-	int len;
-	char *buff;
+	int		len;
+	char	*buff;
+
 	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if(!buff)
-		return NULL;
-	while(1)
+	if (!buff)
+		return (NULL);
+	while (1)
 	{
-		len = read(fd,buff,BUFFER_SIZE);
-		if(len == -1)
+		len = read(fd, buff, BUFFER_SIZE);
+		if (len == -1)
 		{
 			free(buffer);
 			buffer = NULL;
-			break;
+			break ;
 		}
 		buff[len] = 0;
-		if(!*buff)
-		{
-			break;
-		}
-		buffer = ft_strjoin(buffer,buff);
-		if(has_nline(buffer))
-			break;
+		if (!*buff)
+			break ;
+		buffer = ft_strjoin(buffer, buff);
+		if (!buffer || has_nline(buffer))
+			break ;
 	}
 	free(buff);
-	return buffer;
+	return (buffer);
 }
 
-char *get_line2(char *buffer)
+char	*get_the_line(char *buffer)
 {
-	char *line;
-	int len;
-	int i;
+	char	*line;
+	int		len;
+	int		i;
+
 	i = 0;
 	len = 0;
-	if(!buffer || !*buffer) 
-	{
-		return NULL;
-	}
-	while(buffer[len] && buffer[len] != '\n')
+	if (!buffer || !*buffer)
+		return (NULL);
+	while (buffer[len] && buffer[len] != '\n')
 		len++;
-	if(buffer[len] == '\n')
+	if (buffer[len] == '\n')
 		len++;
 	line = malloc((len + 1) * sizeof(char));
-	if(!line)
-		return NULL;
-	while(buffer[i] && len)
+	if (!line)
+		return (NULL);
+	while (buffer[i] && len)
 	{
 		line[i] = buffer[i];
 		i++;
 		len--;
 	}
 	line[i] = 0;
-	return line;
+	return (line);
 }
 
-char *get_rest(char *buffer,int line_len)
+char	*get_rest(char *buffer, char *line)
 {
-	int i;
-	char *new;
+	int		i;
+	char	*new;
+
 	i = 0;
-	if(!buffer || !*buffer)
-	{
-		free(buffer);
-		return NULL;
-	}
-	new = ft_strdup(buffer + line_len);
+	if (!buffer || !*buffer)
+		return (free(buffer), free(line), (NULL));
+	new = ft_strdup(buffer + ft_strlen(line));
 	free(buffer);
-	return new;
+	return (new);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-	static char *buffer;
-	char *line;
-	if(fd < 0 || BUFFER_SIZE <= 0)
-		return NULL;
-	buffer = read_line(fd,buffer);
-	line = get_line2(buffer);
-	buffer = get_rest(buffer , ft_strlen(line));
-	return line;
+	static char	*buffer;
+	char		*line;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	buffer = read_line(fd, buffer);
+	line = get_the_line(buffer);
+	buffer = get_rest(buffer, line);
+	return (line);
 }
 
 //int main()
