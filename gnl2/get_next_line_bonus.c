@@ -6,7 +6,7 @@
 /*   By: zmourid <zmourid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 17:08:05 by zmourid           #+#    #+#             */
-/*   Updated: 2023/12/21 14:51:22 by zmourid          ###   ########.fr       */
+/*   Updated: 2023/12/21 15:01:30 by zmourid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,14 +93,14 @@ char	*get_rest(char *buffer, char *line)
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
+	static char	*buffer[1024];
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > INT_MAX)
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > INT_MAX || fd > 1024)
 		return (NULL);
-	buffer = read_line(fd, buffer);
-	line = get_the_line(buffer);
-	buffer = get_rest(buffer, line);
+	buffer[fd] = read_line(fd, buffer[fd]);
+	line = get_the_line(buffer[fd]);
+	buffer[fd] = get_rest(buffer[fd], line);
 	return (line);
 }
 
